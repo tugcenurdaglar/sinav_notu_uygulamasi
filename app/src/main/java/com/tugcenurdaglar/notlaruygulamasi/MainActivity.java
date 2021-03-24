@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -21,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Notlar> notlarArrayList;
     private NotlarAdapter adapter;
 
-    private Veritabani vt;
+    private NotlarInterface notlarDIF;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +38,38 @@ public class MainActivity extends AppCompatActivity {
         rv = findViewById(R.id.rv);
         fab = findViewById(R.id.fab);
 
-        vt= new Veritabani(this);
 
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        notlarArrayList = new NotlarDao().tumNotlar(vt);
 
-        double toplam = 0.0;
-        for (Notlar n: notlarArrayList){
-            toplam = toplam +(n.getNot1()+n.getNot2())/2;
-        }
-
-        toolbar.setSubtitle("Ortalama : "+(toplam/notlarArrayList.size()));
-
-        adapter = new NotlarAdapter(this,notlarArrayList);
-
-        rv.setAdapter(adapter);
+        notlarDIF = ApiUtils.getNotlarInterface();
 
 
+        notlarDIF.tumNotlar().enqueue(new Callback<NotlarCevap>() {
+            @Override
+            public void onResponse(Call<NotlarCevap> call, Response<NotlarCevap> response) {
+
+                double toplam= 0;
+
+                List<Notlar> liste = response.body().getNotlar();
+
+                for (Notlar n:liste){
+                    toplam = toplam+(Integer.parseInt(n.getNot1())+ Integer.parseInt(n.getNot2()))/2;
+                }
+
+                adapter = new NotlarAdapter(MainActivity.this, liste);
+
+                rv.setAdapter(adapter);
+
+                toolbar.setSubtitle("Ortalama: "+toplam/liste.size());
+            }
+
+            @Override
+            public void onFailure(Call<NotlarCevap> call, Throwable t) {
+
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

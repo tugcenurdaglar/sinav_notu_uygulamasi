@@ -1,52 +1,56 @@
+
 package com.tugcenurdaglar.notlaruygulamasi;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Notlar implements Serializable { //Serializable ile nesne transferi gerçekleşir
-    private int not_id;
-    private String ders_adi;
-    private int not1;
-    private int not2;
+public class Notlar implements Serializable {
 
-    public Notlar() {
+    @SerializedName("not_id")
+    @Expose
+    private String notId;
+    @SerializedName("ders_adi")
+    @Expose
+    private String dersAdi;
+    @SerializedName("not1")
+    @Expose
+    private String not1;
+    @SerializedName("not2")
+    @Expose
+    private String not2;
+
+    public String getNotId() {
+        return notId;
     }
 
-    public Notlar(int not_id, String ders_adi, int not1, int not2) {
-        this.not_id = not_id;
-        this.ders_adi = ders_adi;
-        this.not1 = not1;
-        this.not2 = not2;
+    public void setNotId(String notId) {
+        this.notId = notId;
     }
 
-    public int getNot_id() {
-        return not_id;
+    public String getDersAdi() {
+        return dersAdi;
     }
 
-    public void setNot_id(int not_id) {
-        this.not_id = not_id;
+    public void setDersAdi(String dersAdi) {
+        this.dersAdi = dersAdi;
     }
 
-    public String getDers_adi() {
-        return ders_adi;
-    }
-
-    public void setDers_adi(String ders_adi) {
-        this.ders_adi = ders_adi;
-    }
-
-    public int getNot1() {
+    public String getNot1() {
         return not1;
     }
 
-    public void setNot1(int not1) {
+    public void setNot1(String not1) {
         this.not1 = not1;
     }
 
-    public int getNot2() {
+    public String getNot2() {
         return not2;
     }
 
-    public void setNot2(int not2) {
+    public void setNot2(String not2) {
         this.not2 = not2;
     }
+
 }

@@ -2,6 +2,9 @@ package com.tugcenurdaglar.notlaruygulamasi;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +20,8 @@ public class NotKayitActivity extends AppCompatActivity {
     private EditText editTextDers, editTextNot1, editTextNot2;
     private Button buttonKaydet;
 
-    private Veritabani vt;
+    private NotlarInterface notlardif;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +34,7 @@ public class NotKayitActivity extends AppCompatActivity {
         editTextNot2 = findViewById(R.id.editTextNot2);
         buttonKaydet = findViewById(R.id.buttonKaydet);
 
-        vt = new Veritabani(this);
+        notlardif = ApiUtils.getNotlarInterface();
 
         toolbar2.setTitle("Not Kayıt");
         setSupportActionBar(toolbar2);
@@ -42,6 +46,17 @@ public class NotKayitActivity extends AppCompatActivity {
                 String not1 = editTextNot1.getText().toString().trim();
                 String not2 = editTextNot2.getText().toString().trim();
 
+                notlardif.notEkle(ders_adi,Integer.parseInt(not1), Integer.parseInt(not2)).enqueue(new Callback<CRUDCevap>() {
+                    @Override
+                    public void onResponse(Call<CRUDCevap> call, Response<CRUDCevap> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CRUDCevap> call, Throwable t) {
+
+                    }
+                });
 
                 if (TextUtils.isEmpty(ders_adi)){
                     Snackbar.make(v,"Ders adı giriniz", Snackbar.LENGTH_SHORT).show();
@@ -58,7 +73,6 @@ public class NotKayitActivity extends AppCompatActivity {
                     return;
                 }
 
-                new NotlarDao().notEkle(vt, ders_adi, Integer.parseInt(not1), Integer.parseInt(not2));
 
                 startActivity(new Intent(NotKayitActivity.this, MainActivity.class));
                 finish();

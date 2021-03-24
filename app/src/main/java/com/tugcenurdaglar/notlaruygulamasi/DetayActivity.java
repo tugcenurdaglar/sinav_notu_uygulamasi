@@ -3,6 +3,9 @@ package com.tugcenurdaglar.notlaruygulamasi;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +22,7 @@ public class DetayActivity extends AppCompatActivity {
     private EditText editTextDerss, editTextNott1, editTextNott2;
 
     private Notlar not;
-
-    private Veritabani vt;
+    private NotlarInterface notlardif;
 
 
     @Override
@@ -33,16 +35,17 @@ public class DetayActivity extends AppCompatActivity {
         editTextNott1 = findViewById(R.id.editTextNott1);
         editTextNott2 = findViewById(R.id.editTextNott2);
 
-        not = (Notlar) getIntent().getSerializableExtra("nesne");
-        vt = new Veritabani(this);
-
-        editTextDerss.setText(not.getDers_adi());
-        editTextNott1.setText(String.valueOf(not.getNot1()));
-        editTextNott2.setText(String.valueOf(not.getNot2()));
-
-
         toolbar3.setTitle("Not Detay");
         setSupportActionBar(toolbar3);
+
+        notlardif =ApiUtils.getNotlarInterface();
+
+        not = (Notlar) getIntent().getSerializableExtra("nesne");
+
+        editTextDerss.setText(not.getDersAdi());
+        editTextNott1.setText(not.getNot1());
+        editTextNott2.setText(not.getNot2());
+
 
     }
 
@@ -61,7 +64,18 @@ public class DetayActivity extends AppCompatActivity {
                         "Evet", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new NotlarDao().notSil(vt, not.getNot_id());
+
+                                notlardif.notSil(Integer.parseInt(not.getNotId())).enqueue(new Callback<CRUDCevap>() {
+                                    @Override
+                                    public void onResponse(Call<CRUDCevap> call, Response<CRUDCevap> response) {
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<CRUDCevap> call, Throwable t) {
+
+                                    }
+                                });
                                 startActivity(new Intent(DetayActivity.this,MainActivity.class));
                                 finish();
 
@@ -75,6 +89,18 @@ public class DetayActivity extends AppCompatActivity {
                 String not1 = editTextNott1.getText().toString().trim();
                 String not2 = editTextNott2.getText().toString().trim();
 
+                notlardif.notGuncelle(Integer.parseInt(not.getNotId()), ders_adi,
+                        Integer.parseInt(not1), Integer.parseInt(not2)).enqueue(new Callback<CRUDCevap>() {
+                    @Override
+                    public void onResponse(Call<CRUDCevap> call, Response<CRUDCevap> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CRUDCevap> call, Throwable t) {
+
+                    }
+                });
 
                 if (TextUtils.isEmpty(ders_adi)){
                     Snackbar.make(toolbar3,"Ders adı giriniz", Snackbar.LENGTH_SHORT).show();
@@ -91,7 +117,6 @@ public class DetayActivity extends AppCompatActivity {
                     return false;
                 }
 
-                new NotlarDao().notDuzenle(vt, not.getNot_id(),ders_adi, Integer.parseInt(not1), Integer.parseInt(not2));
 
 
                 startActivity(new Intent(DetayActivity.this,MainActivity.class));

@@ -37,7 +37,7 @@ public class NotlarAdapter extends RecyclerView.Adapter<NotlarAdapter.CardTasari
 
          Notlar not = notlarListe.get(position);
 
-        holder.textViewDers.setText(not.getDers_adi());
+        holder.textViewDers.setText(not.getDersAdi());
         holder.textViewNot1.setText(String.valueOf(not.getNot1()));
         holder.textViewNot2.setText(String.valueOf(not.getNot2()));
 
